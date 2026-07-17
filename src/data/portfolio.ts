@@ -23,7 +23,7 @@ export const portfolioData = {
     ],
     stats: [
       { value: 4, suffix: "", label: "Projects Built" },
-      { value: 8, suffix: "", label: "Certifications Earned" },
+      { value: 6, suffix: "", label: "Certifications Earned" },
       { value: 9, suffix: ".33", label: "CGPA at KL University" },
       { value: 2026, suffix: "", label: "Graduation Year" },
     ],
@@ -79,7 +79,7 @@ export const portfolioData = {
         name: "DevOps & Cloud",
         items: ["CI/CD (GitHub Actions)", "GCP", "AWS", "Linux", "Windows", "Netlify"],
       },
-      { name: "Tools", items: ["Git", "Docker", "JUnit", "Postman", "Maven", "Swagger/OpenAPI"] },
+      { name: "Tools", items: ["Git", "Docker", "JUnit", "Postman", "Maven", "Swagger/OpenAPI", "OWASP ZAP"] },
       {
         name: "Soft Skills",
         items: ["Analytical Thinking", "Problem Solving", "Leadership", "Adaptability", "Team Collaboration"],
@@ -130,8 +130,8 @@ export const portfolioData = {
       description:
         "A unified food enterprise platform (B2C ordering, POS checkout, B2B supplier management) with cryptographically signed QR restocking labels, interactive UPI scan-to-pay billing, and scheduled HTML email digests.",
       tech: ["Python", "Flask", "React", "MySQL", "SQLAlchemy", "Tailwind CSS"],
-      github: "https://github.com/neerajsait/FlavorFlow",
-      link: "https://github.com/neerajsait/FlavorFlow",
+      github: "https://github.com/neerajsait/Food",
+      link: "https://github.com/neerajsait/Food",
     },
   ],
 

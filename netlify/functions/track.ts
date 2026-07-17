@@ -28,7 +28,7 @@ export default async (req: Request, context: Context) => {
 
   const locationString = `${city}, ${region}, ${country}`;
   const resendApiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.TO_EMAIL || "2200030957cseh@gmail.com";
+  const toEmail = process.env.TO_EMAIL || "2200030957@kluniversity.in";
 
   if (!resendApiKey) {
     console.error("Missing RESEND_API_KEY environment variable");
