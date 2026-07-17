@@ -26,6 +26,21 @@ export default async (req: Request, context: Context) => {
   const country = context.geo?.country?.name || "Unknown Country";
   const ip = context.ip || "Unknown IP";
 
+  // Filter out search engines, crawlers, and automated scanners
+  const userAgent = req.headers.get("user-agent") || "";
+  const isBot = /bot|crawler|spider|ping|uptime|lighthouse|headless|curl|wget|python|node|axios|go-http|scanner/i.test(userAgent);
+  
+  if (isBot) {
+    console.log(`Tracking skipped: Bot detected (${userAgent})`);
+    return new Response(JSON.stringify({ success: true, message: "Bot tracking skipped" }), {
+      status: 200,
+      headers: { 
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  }
+
   const locationString = `${city}, ${region}, ${country}`;
   const resendApiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.TO_EMAIL || "2200030957@kluniversity.in";

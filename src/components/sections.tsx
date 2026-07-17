@@ -48,8 +48,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.15 }}
           className="max-w-2xl text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 leading-relaxed"
         >
-          I build production-grade REST APIs with real security — MFA, RBAC, and rate-limiting — not just
-          CRUD tutorials.
+          I architect secure, high-throughput REST APIs using Spring Boot and Flask — implementing caching layer strategies (Redis) and row-level database optimization rather than simple CRUD setups.
         </motion.p>
 
         <div className="overflow-hidden leading-[0.9]">
