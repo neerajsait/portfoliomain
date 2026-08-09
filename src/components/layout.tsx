@@ -42,9 +42,9 @@ export function Navbar() {
           <a
             href="#hero"
             data-testid="nav-logo"
-            className="border border-accent px-2.5 py-1 font-display font-bold text-sm text-accent tracking-widest hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="hover:scale-105 transition-transform duration-300"
           >
-            NS
+            <img src="/favicon.svg" alt="Logo" className="w-8 h-8 sm:w-9 sm:h-9" />
           </a>
 
           <nav className="hidden md:flex items-center gap-10">

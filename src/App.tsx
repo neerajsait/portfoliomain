@@ -24,12 +24,25 @@ function App() {
     }
 
     // 1. Initial Page View Tracking
-    const hasTracked = sessionStorage.getItem("visitor-tracked");
-    if (!hasTracked) {
-      fetch("/api/track")
+    const trackKey = "visitor-tracked-time";
+    const lastTracked = localStorage.getItem(trackKey);
+    const now = new Date().getTime();
+    
+    // Track if not tracked in the last 24 hours (86400000 ms)
+    if (!lastTracked || now - parseInt(lastTracked) > 86400000) {
+      const payload = {
+        referrer: document.referrer || "Direct",
+        searchParams: window.location.search,
+      };
+
+      fetch("/api/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
         .then((res) => {
           if (res.ok) {
-            sessionStorage.setItem("visitor-tracked", "true");
+            localStorage.setItem(trackKey, now.toString());
           }
         })
         .catch((err) => console.error("Tracking error:", err));

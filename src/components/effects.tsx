@@ -56,9 +56,9 @@ export function Cursor() {
         animate={{
           width: isHovering ? 44 : 10,
           height: isHovering ? 44 : 10,
-          backgroundColor: isHovering ? "transparent" : "#ff6b35",
+          backgroundColor: isHovering ? "transparent" : "#C7F000",
           borderWidth: isHovering ? 1.5 : 0,
-          borderColor: "#ff6b35",
+          borderColor: "#C7F000",
         }}
         transition={{ duration: 0.15, ease: "easeOut" }}
         className="rounded-full border-solid"
