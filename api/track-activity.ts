@@ -19,14 +19,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   }
 
   try {
-    let bodyData = "";
-    req.on("data", chunk => {
-      bodyData += chunk.toString();
-    });
-
-    await new Promise((resolve) => req.on("end", resolve));
-
-    const body = JSON.parse(bodyData || "{}");
+    let body;
+    if ((req as any).body) {
+      body = typeof (req as any).body === "string" ? JSON.parse((req as any).body) : (req as any).body;
+    } else {
+      let bodyData = "";
+      for await (const chunk of req) {
+        bodyData += chunk;
+      }
+      body = JSON.parse(bodyData || "{}");
+    }
+    
     const { clicks = {}, userAgent = "Unknown", referrer = "Direct" } = body;
 
     // Read location details from Vercel's automatic request headers
