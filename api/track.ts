@@ -1,7 +1,17 @@
 import type { IncomingMessage, ServerResponse } from "http";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== "GET") {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    res.statusCode = 204;
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.end();
+    return;
+  }
+
+  if (req.method !== "POST") {
     res.statusCode = 405;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ error: "Method Not Allowed" }));
@@ -61,11 +71,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.end(JSON.stringify({ success: true, location: locationString }));
   } catch (error) {
     console.error("Error sending email:", error);
     res.statusCode = 500;
     res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.end(JSON.stringify({ error: "Failed to send tracking email" }));
   }
 }

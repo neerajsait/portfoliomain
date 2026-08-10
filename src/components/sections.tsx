@@ -46,7 +46,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="max-w-2xl text-lg sm:text-xl text-foreground mb-3 font-display font-medium"
+          className="max-w-2xl text-lg sm:text-xl text-foreground mb-3 font-sans font-medium"
         >
           <div className="py-3 leading-loose">{portfolioData.hero.headline}</div>
         </motion.h2>
@@ -858,7 +858,7 @@ export function Contact() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="font-display font-bold tracking-tight leading-[0.88] mb-8"
+          className="font-sans font-bold tracking-tight leading-[0.88] mb-8"
           style={{ fontSize: "clamp(40px, 11vw, 120px)" }}
         >
           Let's Work
@@ -926,7 +926,7 @@ export function Contact() {
               data-testid={item.testid}
               className="flex items-center justify-between py-5 sm:py-6 border-b border-border group hover:pl-2 sm:hover:pl-4 transition-all duration-300 gap-3"
             >
-              <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-lg md:text-2xl font-display font-bold group-hover:text-accent transition-colors min-w-0 break-all leading-normal pb-1">
+              <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-lg md:text-2xl font-sans font-bold group-hover:text-accent transition-colors min-w-0 break-all leading-normal pb-1">
                 <span className="text-muted-foreground group-hover:text-accent transition-colors shrink-0">
                   {item.icon}
                 </span>
