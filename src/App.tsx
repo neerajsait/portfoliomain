@@ -68,7 +68,6 @@ function App() {
     // 3. Send summary on unload/hide
     const sendSummary = () => {
       const storedClicks = JSON.parse(sessionStorage.getItem("visitor-clicks") || "{}");
-      if (Object.keys(storedClicks).length === 0) return;
 
       const payload = JSON.stringify({
         clicks: storedClicks,
@@ -76,16 +75,13 @@ function App() {
         referrer: document.referrer || "Direct",
       });
 
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/track-activity", payload);
-      } else {
-        fetch("/api/track-activity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: payload,
-          keepalive: true,
-        });
-      }
+      // Using fetch with keepalive is more reliable for JSON payloads than sendBeacon
+      fetch("/api/track-activity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      });
 
       // Clear clicks so we don't send duplicates if the user returns to the tab
       sessionStorage.removeItem("visitor-clicks");
