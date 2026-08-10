@@ -669,7 +669,6 @@ export function Skills() {
   return (
     <section id="skills" className="relative py-24 sm:py-32 bg-card border-y border-border overflow-hidden">
       {/* Background elements */}
-      <div className="absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-accent" />
       <div className="absolute bottom-1/4 right-0 w-px h-32 bg-accent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 relative z-10">

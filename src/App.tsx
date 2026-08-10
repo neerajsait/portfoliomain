@@ -86,21 +86,19 @@ function App() {
           keepalive: true,
         });
       }
-    };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        sendSummary();
-      }
+      // Clear clicks so we don't send duplicates if the user returns to the tab
+      sessionStorage.removeItem("visitor-clicks");
+      Object.keys(clicks).forEach(key => delete clicks[key]);
     };
 
     window.addEventListener("beforeunload", sendSummary);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", sendSummary);
 
     return () => {
       document.removeEventListener("click", handleGlobalClick);
       window.removeEventListener("beforeunload", sendSummary);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", sendSummary);
     };
   }, []);
 
