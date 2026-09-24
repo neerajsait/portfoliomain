@@ -119,8 +119,6 @@ export const portfolioData = {
           "Spring MVC",
           "Flask",
           "REST APIs",
-          "Microservices",
-          "OOP",
         ],
       },
 
@@ -149,11 +147,10 @@ export const portfolioData = {
         items: [
           "AWS",
           "GCP",
+          "Oracle",
           "Docker",
           "GitHub Actions",
           "CI/CD",
-          "Linux",
-          "Netlify",
         ],
       },
 
@@ -176,23 +173,9 @@ export const portfolioData = {
           "Maven",
           "JUnit",
           "Postman",
-          "Swagger/OpenAPI",
-          "Docker",
         ],
       },
-      {
-        name: "AI & Engineering",
-        items: [
-          "AI-Assisted Development",
-          "AI-Powered Automation",
-          "Prompt Engineering",
-          "AI-Assisted Debugging",
-          "AI-Assisted Testing",
-          "Code Review",
-          "Technical Research",
-        ],
-      },
-    ],
+          ],
 
     marquee: [
       "AI",
