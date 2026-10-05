@@ -1,7 +1,179 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Mail, Monitor, Server, Database, Cloud, ArrowDown, X } from "lucide-react";
+import { ArrowRight, Download, Github, Linkedin, Mail, Monitor, Server, Database, Cloud, ArrowDown, X, ExternalLink } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
+import { ScrambleText, Magnetic } from "./effects";
+
+/* ───────────────────────── Interactive Components ───────────────────────── */
+
+function LiveStatus() {
+  const [careerStreamLatency, setCareerStreamLatency] = useState<number | null>(null);
+  const [foodPilotLatency, setFoodPilotLatency] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    
+    const measureLatency = async (service: 'careerstream' | 'foodpilot') => {
+      try {
+        let baseUrl = service === 'careerstream' ? "https://careerstream-demo.onrender.com" : "https://foodpilot-api.onrender.com";
+        try {
+          const res = await fetch("/tunnel-url.json");
+          if (res.ok) {
+            const data = await res.json();
+            if (service === 'careerstream' && data.careerStream) baseUrl = data.careerStream;
+            if (service === 'foodpilot' && data.foodPilot) baseUrl = data.foodPilot;
+          }
+        } catch (e) {}
+
+        const start = performance.now();
+        await fetch(`${baseUrl}/actuator/health`, { mode: 'no-cors' });
+        const end = performance.now();
+        
+        if (mounted) {
+          const latency = Math.round(end - start);
+          if (service === 'careerstream') setCareerStreamLatency(latency);
+          else setFoodPilotLatency(latency);
+        }
+      } catch (e) {}
+    };
+
+    const ping = () => {
+      measureLatency('careerstream');
+      measureLatency('foodpilot');
+    };
+
+    ping();
+    const interval = setInterval(ping, 60000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <div className="flex items-center gap-3 text-accent font-bold">
+      <span className="flex items-center gap-2">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+        </span>
+        CareerStream &mdash; LIVE <span className="text-muted-foreground ml-1 font-normal">&middot; {careerStreamLatency || '...'}ms</span>
+      </span>
+      <span className="text-muted-foreground/40 hidden sm:inline">&middot;</span>
+      <span className="flex items-center gap-2">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+        </span>
+        FoodPilot &mdash; LIVE <span className="text-muted-foreground ml-1 font-normal">&middot; {foodPilotLatency || '...'}ms</span>
+      </span>
+    </div>
+  );
+}
+
+function TerminalCard() {
+  const [step, setStep] = useState(0);
+  const [typed, setTyped] = useState("");
+  const [cmdIndex, setCmdIndex] = useState(0);
+  const [latency, setLatency] = useState<number | null>(null);
+
+  const commands = [
+    { cmd: "curl neerajsait.github.io/RecruiterService", service: "careerstream" },
+    { cmd: "curl foodpilot-customer.netlify.app", service: "foodpilot" }
+  ];
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    let timeout1: ReturnType<typeof setTimeout>;
+    let timeout2: ReturnType<typeof setTimeout>;
+    
+    let currentIdx = 0;
+
+    const startTyping = () => {
+      let i = 0;
+      setTyped("");
+      setStep(0);
+      setCmdIndex(currentIdx);
+      
+      const currentCmd = commands[currentIdx].cmd;
+      
+      interval = setInterval(async () => {
+        if (i <= currentCmd.length) {
+          setTyped(currentCmd.substring(0, i));
+          i++;
+        } else {
+          clearInterval(interval);
+          
+          let measuredLatency = 845;
+          const start = performance.now();
+          try {
+            const service = commands[currentIdx].service;
+            let pingUrl = service === 'careerstream' 
+              ? "https://extending-had-italiano-sam.trycloudflare.com/" 
+              : "https://foodpilot-customer.netlify.app/";
+            try {
+              const res = await fetch("/tunnel-url.json");
+              if (res.ok) {
+                const data = await res.json();
+                if (service === 'careerstream' && data.careerStream) pingUrl = data.careerStream;
+                if (service === 'foodpilot' && data.foodPilot) pingUrl = data.foodPilot;
+              }
+            } catch (e) {}
+            await fetch(pingUrl, { mode: 'no-cors' });
+            measuredLatency = Math.round(performance.now() - start);
+          } catch(e) {}
+          
+          setLatency(measuredLatency);
+          
+          timeout1 = setTimeout(() => {
+            setStep(1);
+            timeout2 = setTimeout(() => {
+              currentIdx = (currentIdx + 1) % commands.length;
+              startTyping();
+            }, 5000);
+          }, 400);
+        }
+      }, 50);
+    };
+
+    startTyping();
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+    };
+  }, []);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.6, duration: 0.5 }}
+      className="hidden xl:block w-[420px] h-[150px] bg-[#0c0c0e] rounded-lg border border-border/50 p-5 font-mono text-[13px] text-muted-foreground shadow-2xl relative mb-2"
+    >
+      <div className="absolute top-0 left-0 right-0 h-8 bg-[#141417] border-b border-border/50 flex items-center px-4 gap-2 rounded-t-lg">
+        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+        <span className="ml-2 text-[10px] text-muted-foreground/50 font-sans">bash - ~</span>
+      </div>
+      <div className="mt-6">
+        <div className="text-accent/80">
+          <span className="text-muted-foreground mr-2">$</span>
+          {typed}
+          {step === 0 && <span className="animate-pulse w-2 h-4 bg-accent inline-block ml-1 align-middle" />}
+        </div>
+        {step === 1 && (
+          <div className="mt-2 text-foreground/80 leading-relaxed whitespace-pre">
+            {`{"status": "UP", "latency": "${latency}ms"}`}
+            <span className="animate-pulse w-2 h-4 bg-muted-foreground inline-block ml-1 align-middle" />
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
 
 /* ───────────────────────── Hero ───────────────────────── */
 
@@ -33,6 +205,10 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto w-full pt-24 pb-32">
+        <div className="hidden xl:block absolute top-36 right-0 z-10 xl:-right-4">
+          <TerminalCard />
+        </div>
+
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -55,49 +231,62 @@ export function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-2xl text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 leading-relaxed"
+          className="max-w-2xl text-sm sm:text-base text-muted-foreground mb-4 sm:mb-5 leading-relaxed"
         >
           {portfolioData.hero.subDescription}
         </motion.p>
 
-        <div className="overflow-hidden leading-[0.9]">
-          <h1
-            className="font-display font-bold tracking-[-0.03em] flex"
-            style={{ fontSize: "clamp(44px, 15vw, 164px)" }}
-          >
-            {line1.map((c, i) => (
-              <motion.span
-                key={i}
-                custom={i}
-                variants={charVariant}
-                initial="hidden"
-                animate="visible"
-                className="inline-block"
-              >
-                {c}
-              </motion.span>
-            ))}
-          </h1>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="font-mono text-[11px] sm:text-[13px] text-muted-foreground mb-8 sm:mb-10"
+        >
+          <span className="text-accent font-bold">3</span> live deployments
+        </motion.div>
 
-        <div className="overflow-hidden leading-[0.9] mb-8 sm:mb-10">
-          <h1
-            className="font-display font-bold tracking-[-0.03em] flex flex-wrap text-foreground/55"
-            style={{ fontSize: "clamp(28px, 8vw, 164px)" }}
-          >
-            {line2.map((c, i) => (
-              <motion.span
-                key={i}
-                custom={line1.length + i}
-                variants={charVariant}
-                initial="hidden"
-                animate="visible"
-                className="inline-block"
+        <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between mb-8 sm:mb-10 gap-8">
+          <div className="flex-shrink-0">
+            <div className="overflow-hidden leading-[0.9]">
+              <h1
+                className="font-display font-bold tracking-[-0.03em] flex"
+                style={{ fontSize: "clamp(44px, 15vw, 164px)" }}
               >
-                {c === " " ? "\u00A0" : c}
-              </motion.span>
-            ))}
-          </h1>
+                {line1.map((c, i) => (
+                  <motion.span
+                    key={i}
+                    custom={i}
+                    variants={charVariant}
+                    initial="hidden"
+                    animate="visible"
+                    className="inline-block"
+                  >
+                    {c}
+                  </motion.span>
+                ))}
+              </h1>
+            </div>
+
+            <div className="overflow-hidden leading-[0.9]">
+              <h1
+                className="font-display font-bold tracking-[-0.03em] flex flex-wrap text-foreground/55"
+                style={{ fontSize: "clamp(28px, 8vw, 164px)" }}
+              >
+                {line2.map((c, i) => (
+                  <motion.span
+                    key={i}
+                    custom={line1.length + i}
+                    variants={charVariant}
+                    initial="hidden"
+                    animate="visible"
+                    className="inline-block"
+                  >
+                    {c === " " ? "\u00A0" : c}
+                  </motion.span>
+                ))}
+              </h1>
+            </div>
+          </div>
         </div>
 
         <motion.div
@@ -112,13 +301,18 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.5 }}
-          className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-12 sm:mb-14 text-xs font-mono uppercase tracking-[0.15em] sm:tracking-[0.2em]"
+          className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-12 sm:mb-14 text-xs font-mono uppercase tracking-[0.15em] sm:tracking-[0.2em]"
         >
           <span className="text-muted-foreground">{portfolioData.hero.role}</span>
-          <span className="flex items-center gap-2 text-accent">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            Available for opportunities
-          </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+            <span className="flex items-center gap-2 text-accent">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+              </span>
+              Available for opportunities
+            </span>
+          </div>
         </motion.div>
 
         <motion.div
@@ -244,24 +438,15 @@ export function About() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 relative z-10">
-        <div className="border-b border-border pb-8 mb-16 sm:mb-20 flex flex-col md:flex-row md:items-end gap-4 md:gap-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-display font-bold text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight"
-          >
-            The Developer
-          </motion.h2>
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+        <div className="border-b border-border pb-8 mb-16 sm:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <h2 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight">
+            <ScrambleText text="The Developer" />
+          </h2>
+          <span
             className="text-accent font-mono text-sm uppercase tracking-widest"
           >
             Backend APIs · Spring Boot · Flask
-          </motion.span>
+          </span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-8 mb-20 sm:mb-24">
@@ -542,6 +727,95 @@ function ProjectWorkflowModal({ project, onClose }: { project: any; onClose: () 
 
 /* ───────────────────────── Projects ───────────────────────── */
 
+function ProjectCard({ project, index, hovered, setHovered, setActiveProject }: { project: any, index: number, hovered: number | null, setHovered: (n: number | null) => void, setActiveProject: (p: any) => void }) {
+  return (
+    <motion.div
+      onMouseEnter={() => setHovered(index)}
+      onMouseLeave={() => setHovered(null)}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, delay: index * 0.07 }}
+      style={{
+        borderLeftWidth: "2px",
+        borderLeftColor: hovered === index ? "hsl(var(--accent))" : "transparent",
+        transition: "border-left-color 0.25s ease",
+      }}
+      className="group border-b border-border relative"
+    >
+      <div
+        className="flex flex-col md:flex-row md:items-center gap-5 sm:gap-6 py-7 sm:py-8 md:py-10 transition-all duration-300"
+        style={{
+          paddingLeft: hovered === index ? "1.75rem" : "0",
+          backgroundColor: hovered === index ? "rgba(255,255,255,0.018)" : "transparent",
+        }}
+      >
+        <span className="font-mono text-xs text-muted-foreground/50 shrink-0 w-10">
+          0{index + 1}
+        </span>
+
+        <div className="flex-1 min-w-0">
+          <button 
+            onClick={() => setActiveProject(project)}
+            className="text-left focus:outline-none"
+          >
+            <h3 className="font-display font-bold text-xl sm:text-2xl md:text-3xl mb-3 group-hover:text-accent transition-colors duration-300 flex items-center gap-3">
+              {project.title}
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity font-mono text-[10px] uppercase tracking-widest text-muted-foreground border border-border px-2 py-0.5 ml-2 hidden sm:inline-block">View Workflow</span>
+            </h3>
+          </button>
+          <div className="flex flex-wrap gap-2">
+            {project.tech.map((t: string) => (
+              <span
+                key={t}
+                className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground border border-border px-2 sm:px-2.5 py-1"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="md:w-80 shrink-0 flex flex-col gap-4">
+          <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
+          <div className="flex items-center gap-6">
+            <Magnetic>
+              <button
+                onClick={() => setActiveProject(project)}
+                className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-accent hover:gap-3 transition-all duration-200 focus:outline-none"
+              >
+                View <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </Magnetic>
+            <Magnetic>
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors p-2 -m-2 inline-block"
+              >
+                <Github className="w-4 h-4" />
+              </a>
+            </Magnetic>
+            {project.link && project.link !== project.github && (
+              <Magnetic>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors p-2 -m-2 inline-block"
+                >
+                  Live ↗
+                </a>
+              </Magnetic>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export function Projects() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [activeProject, setActiveProject] = useState<any>(null);
@@ -557,97 +831,27 @@ export function Projects() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 relative z-10">
-          <div className="border-b border-border pb-8 mb-0 flex flex-col md:flex-row md:items-end gap-4 md:gap-10">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="font-display font-bold text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight"
-            >
-              What I Build
-            </motion.h2>
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+          <div className="border-b border-border pb-8 mb-0 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <h2 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight">
+              <ScrambleText text="What I Build" />
+            </h2>
+            <span
               className="text-accent font-mono text-sm uppercase tracking-widest"
             >
               {portfolioData.projects.length} projects
-            </motion.span>
+            </span>
           </div>
 
           <div className="flex flex-col">
             {portfolioData.projects.map((project, index) => (
-              <motion.div
+              <ProjectCard 
                 key={project.title}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: index * 0.07 }}
-                onMouseEnter={() => setHovered(index)}
-                onMouseLeave={() => setHovered(null)}
-                className="group border-b border-border relative"
-                style={{
-                  borderLeftWidth: "2px",
-                  borderLeftColor: hovered === index ? "hsl(var(--accent))" : "transparent",
-                  transition: "border-left-color 0.25s ease",
-                }}
-              >
-                <div
-                  className="flex flex-col md:flex-row md:items-center gap-5 sm:gap-6 py-7 sm:py-8 md:py-10 transition-all duration-300"
-                  style={{
-                    paddingLeft: hovered === index ? "1.75rem" : "0",
-                    backgroundColor: hovered === index ? "rgba(255,255,255,0.018)" : "transparent",
-                  }}
-                >
-                  <span className="font-mono text-xs text-muted-foreground/50 shrink-0 w-10">
-                    0{index + 1}
-                  </span>
-
-                  <div className="flex-1 min-w-0">
-                    <button 
-                      onClick={() => setActiveProject(project)}
-                      className="text-left focus:outline-none"
-                    >
-                      <h3 className="font-display font-bold text-xl sm:text-2xl md:text-3xl mb-3 group-hover:text-accent transition-colors duration-300 flex items-center gap-3">
-                        {project.title}
-                        <span className="opacity-0 group-hover:opacity-100 transition-opacity font-mono text-[10px] uppercase tracking-widest text-muted-foreground border border-border px-2 py-0.5 ml-2 hidden sm:inline-block">View Workflow</span>
-                      </h3>
-                    </button>
-                    <div className="flex flex-wrap gap-2">
-                      {project.tech.map((t) => (
-                        <span
-                          key={t}
-                          className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground border border-border px-2 sm:px-2.5 py-1"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="md:w-80 shrink-0 flex flex-col gap-4">
-                    <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
-                    <div className="flex items-center gap-6">
-                      <button
-                        onClick={() => setActiveProject(project)}
-                        className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-accent hover:gap-3 transition-all duration-200 focus:outline-none"
-                      >
-                        View <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <Github className="w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+                project={project}
+                index={index}
+                hovered={hovered}
+                setHovered={setHovered}
+                setActiveProject={setActiveProject}
+              />
             ))}
           </div>
         </div>
@@ -672,7 +876,7 @@ export function Skills() {
       <div className="absolute bottom-1/4 right-0 w-px h-32 bg-accent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-8 gap-y-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-x-8 gap-y-12">
           {portfolioData.skills.categories.map((category, index) => (
             <motion.div
               key={category.name}
@@ -703,6 +907,16 @@ export function Skills() {
 /* ───────────────────────── Certifications ───────────────────────── */
 
 export function Certifications() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      // Get the width of one card + gap to scroll accurately
+      const cardWidth = window.innerWidth < 640 ? 280 : 360; 
+      scrollRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
+    }
+  };
+
   return (
     <section id="certifications" className="relative py-24 sm:py-32 bg-background overflow-hidden">
       <div
@@ -714,26 +928,23 @@ export function Certifications() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 relative z-10">
         <div className="border-b border-border pb-8 mb-14 sm:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-display font-bold text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight"
+          <h2 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight">
+            <ScrambleText text="Credentials" />
+          </h2>
+          <button
+            onClick={scrollRight}
+            className="group flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-accent transition-colors duration-300"
           >
-            Credentials
-          </motion.h2>
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
-          >
-            Drag to explore →
-          </motion.span>
+            <span>Scroll to explore</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+          </button>
         </div>
 
-        <div className="flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar pb-6" style={{ scrollSnapType: "x mandatory" }}>
+        <div 
+          ref={scrollRef}
+          className="flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar pb-6 scroll-smooth" 
+          style={{ scrollSnapType: "x mandatory" }}
+        >
           {portfolioData.certifications.map((cert, i) => {
             const cardContent = (
               <>

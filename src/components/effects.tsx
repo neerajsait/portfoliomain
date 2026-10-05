@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export function GrainOverlay() {
   return <div className="grain-overlay" aria-hidden="true" />;
@@ -78,5 +78,54 @@ export function ScrollProgress() {
         className="h-full w-full bg-accent origin-top"
       />
     </div>
+  );
+}
+
+export function Magnetic({ children, className }: { children: React.ReactElement; className?: string }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current!.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.2, y: middleY * 0.2 });
+  };
+
+  const reset = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const { x, y } = position;
+  return (
+    <motion.div
+      className={className}
+      style={{ position: "relative" }}
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x, y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+
+
+export function ScrambleText({ text, className }: { text: string; className?: string }) {
+  return (
+    <motion.span 
+      className={className} 
+      style={{ display: "inline-block" }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {text}
+    </motion.span>
   );
 }

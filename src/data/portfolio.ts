@@ -2,7 +2,7 @@ export const portfolioData = {
   hero: {
     role: "Full-Stack · Backend · Cybersecurity",
 
-    headline: "I don't just use AI. I engineer with it.",
+    headline: "Backend developer who thinks like an attacker.",
 
     subDescription:
       "My foundation is software engineering: APIs, backend systems, databases, cloud, security and scalable application architecture.",
@@ -107,7 +107,6 @@ export const portfolioData = {
         items: [
           "Java",
           "Python",
-          "JavaScript",
           "SQL",
         ],
       },
@@ -120,6 +119,7 @@ export const portfolioData = {
           "Flask",
           "REST APIs",
           "Microservices",
+          "Hibernate/JPA",
           "OOP",
         ],
       },
@@ -131,6 +131,7 @@ export const portfolioData = {
           "JavaScript",
           "HTML",
           "CSS",
+          "JSP",
         ],
       },
 
@@ -148,7 +149,7 @@ export const portfolioData = {
         name: "Cloud & DevOps",
         items: [
           "AWS",
-          "GCP",
+          "Oracle Cloud",
           "Docker",
           "GitHub Actions",
           "CI/CD",
@@ -160,8 +161,7 @@ export const portfolioData = {
       {
         name: "Security",
         items: [
-          "OWASP",
-          "OWASP ZAP",
+          "OWASP & ZAP",
           "Secure Sessions",
           "Rate Limiting",
           "Zero Trust",
@@ -176,22 +176,11 @@ export const portfolioData = {
           "Maven",
           "JUnit",
           "Postman",
-          "Swagger/OpenAPI",
-          "Docker",
-        ],
-      },
-      {
-        name: "AI & Engineering",
-        items: [
-          "AI-Assisted Development",
-          "AI-Powered Automation",
-          "Prompt Engineering",
-          "AI-Assisted Debugging",
-          "AI-Assisted Testing",
           "Code Review",
-          "Technical Research",
+          "AI-Assisted Development",
         ],
       },
+    
     ],
 
     marquee: [
@@ -213,47 +202,6 @@ export const portfolioData = {
   },
 
   projects: [
-    {
-      title: "Campus Recruitment & Placement Tracking System",
-
-      description:
-        "A backend-driven recruitment platform built with Java and Spring Boot MVC. It exposes RESTful APIs for job postings, candidate tracking, interview scheduling and automated status updates, with shared business logic across recruiter and student modules.",
-
-      tech: [
-        "Java-Spring Boot",
-        "MySQL",
-        "REST APIs",
-        "JUnit",
-        "Postman",
-      ],
-
-      story: {
-        hook: "What if a fake company could reach students before anyone verified it?",
-        problem:
-          "Students can be exposed to fraudulent job postings when companies are allowed to recruit without verification.",
-        decisions: [
-          "Require company verification immediately after recruiter registration",
-          "Keep recruiter features locked until the company is verified",
-          "Have an admin manually contact and verify the company before approval",
-        ],
-        flow: [
-          "Recruiter Registration",
-          "Company Details",
-          "Admin Verification",
-          "Company Approved",
-          "Recruiter Access",
-          "Student Recruitment",
-        ],
-        challenge:
-          "Designing a verification workflow that prevents unverified companies from accessing recruitment features while keeping the process simple for legitimate recruiters.",
-        result:
-          "A recruitment platform where companies must pass admin verification before they can post jobs and hire students.",
-      },
-
-      github: "https://github.com/neerajsait/RecruiterService",
-      link: "https://github.com/neerajsait/RecruiterService",
-    },
-
     {
       title: "ZK Vault — Secure Personal Data Encryption System",
 
@@ -296,6 +244,89 @@ export const portfolioData = {
     },
 
     {
+      title: "Campus Recruitment & Placement Tracking System",
+
+      description:
+        "A backend-driven recruitment platform built with Java and Spring Boot MVC. It exposes RESTful APIs for job postings, candidate tracking, interview scheduling and automated status updates, with shared business logic across recruiter and student modules.",
+
+      tech: [
+        "Java-Spring Boot",
+        "MySQL",
+        "REST APIs",
+        "JUnit",
+        "Postman",
+      ],
+
+      story: {
+        hook: "What if a fake company could reach students before anyone verified it?",
+        problem:
+          "Students can be exposed to fraudulent job postings when companies are allowed to recruit without verification.",
+        decisions: [
+          "Require company verification immediately after recruiter registration",
+          "Keep recruiter features locked until the company is verified",
+          "Have an admin manually contact and verify the company before approval",
+        ],
+        flow: [
+          "Recruiter Registration",
+          "Company Details",
+          "Admin Verification",
+          "Company Approved",
+          "Recruiter Access",
+          "Student Recruitment",
+        ],
+        challenge:
+          "Designing a verification workflow that prevents unverified companies from accessing recruitment features while keeping the process simple for legitimate recruiters.",
+        result:
+          "A recruitment platform where companies must pass admin verification before they can post jobs and hire students.",
+      },
+
+      github: "https://github.com/neerajsait/RecruiterService",
+      link: "https://neerajsait.github.io/RecruiterService/",
+    },
+
+    {
+      title: "FoodPilot ERP Platform",
+
+      description:
+        "A unified business platform combining B2C ordering, POS operations and B2B supplier management. The system connects customer ordering, inventory, authentication, payments, supplier workflows and automated notifications through a Flask and React architecture.",
+
+      tech: [
+        "Python-Flask",
+        "React",
+        "MySQL",
+        "Redis",
+        "Tailwind CSS",
+      ],
+
+      story: {
+        hook: "What if one system could connect the entire food business?",
+        problem:
+          "Customers, POS staff, outlets, inventory and suppliers often work through disconnected workflows, making it difficult to keep orders, stock and business operations in sync.",
+        decisions: [
+          "Build a shared backend for customer, POS, outlet and supplier workflows",
+          "Keep inventory synchronized across orders and operational activities",
+          "Secure sensitive operations with JWT authentication, rate limiting and signed QR codes",
+        ],
+        flow: [
+          "Customer",
+          "QR Order",
+          "Payment",
+          "Inventory",
+          "POS",
+          "Outlet",
+          "Supplier",
+        ],
+        challenge:
+          "Keeping multiple business workflows synchronized while ensuring that customers, staff and administrators only access the operations they are authorized to perform.",
+        result:
+          "A unified food business platform connecting B2C ordering, POS operations, inventory, outlets and B2B supplier management.",
+      },
+
+      github: "https://github.com/neerajsait/FoodPilot",
+      link: "https://foodpilot-customer.netlify.app/",
+    },
+
+    {
       title: "Real-Time Network Monitor",
 
       description:
@@ -334,48 +365,6 @@ export const portfolioData = {
 
       github: "https://github.com/neerajsait/Network-Monitor",
       link: "https://github.com/neerajsait/Network-Monitor",
-    },
-
-    {
-      title: "FlavorFlow ERP Platform",
-
-      description:
-        "A unified business platform combining B2C ordering, POS operations and B2B supplier management. The system connects customer ordering, inventory, authentication, payments, supplier workflows and automated notifications through a Flask and React architecture.",
-
-      tech: [
-        "Python-Flask",
-        "React",
-        "MySQL",
-        "Redis",
-        "Tailwind CSS",
-      ],
-
-      story: {
-        hook: "What if one system could connect the entire food business?",
-        problem:
-          "Customers, POS staff, outlets, inventory and suppliers often work through disconnected workflows, making it difficult to keep orders, stock and business operations in sync.",
-        decisions: [
-          "Build a shared backend for customer, POS, outlet and supplier workflows",
-          "Keep inventory synchronized across orders and operational activities",
-          "Secure sensitive operations with JWT authentication, rate limiting and signed QR codes",
-        ],
-        flow: [
-          "Customer",
-          "QR Order",
-          "Payment",
-          "Inventory",
-          "POS",
-          "Outlet",
-          "Supplier",
-        ],
-        challenge:
-          "Keeping multiple business workflows synchronized while ensuring that customers, staff and administrators only access the operations they are authorized to perform.",
-        result:
-          "A unified food business platform connecting B2C ordering, POS operations, inventory, outlets and B2B supplier management.",
-      },
-
-      github: "https://github.com/neerajsait/Food",
-      link: "https://github.com/neerajsait/Food",
     },
   ],
 

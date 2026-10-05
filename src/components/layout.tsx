@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Github, Linkedin, Mail, Download } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
+import { Magnetic } from "./effects";
 
 const links = [
   { label: "About", href: "#about" },
@@ -49,27 +50,30 @@ export function Navbar() {
 
           <nav className="hidden md:flex items-center gap-10">
             {links.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                data-testid={`nav-link-${l.label.toLowerCase()}`}
-                className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors underline-link"
-              >
-                {l.label}
-              </a>
+              <Magnetic key={l.label}>
+                <a
+                  href={l.href}
+                  data-testid={`nav-link-${l.label.toLowerCase()}`}
+                  className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors underline-link p-2 -m-2 inline-block"
+                >
+                  {l.label}
+                </a>
+              </Magnetic>
             ))}
           </nav>
 
           <div className="flex items-center gap-5">
-            <a
-              href={portfolioData.contact.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid="nav-download-resume"
-              className="hidden md:flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-accent transition-colors"
-            >
-              Resume <Download className="w-3.5 h-3.5" />
-            </a>
+            <Magnetic>
+              <a
+                href={portfolioData.contact.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="nav-download-resume"
+                className="hidden md:flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-accent transition-colors p-2 -m-2"
+              >
+                Resume <Download className="w-3.5 h-3.5" />
+              </a>
+            </Magnetic>
             <button
               className="md:hidden text-foreground p-1"
               onClick={() => setOpen(true)}
@@ -139,31 +143,37 @@ export function Footer() {
           © 2026 Tiruveedhi Neeraj Sai · Made with React & Vite
         </p>
         <div className="flex items-center gap-6">
-          <a
-            href={portfolioData.contact.github}
-            target="_blank"
-            rel="noreferrer"
-            className="text-muted-foreground hover:text-accent transition-colors"
-            data-testid="link-footer-github"
-          >
-            <Github className="w-4 h-4" />
-          </a>
-          <a
-            href={portfolioData.contact.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="text-muted-foreground hover:text-accent transition-colors"
-            data-testid="link-footer-linkedin"
-          >
-            <Linkedin className="w-4 h-4" />
-          </a>
-          <a
-            href={`mailto:${portfolioData.contact.email}`}
-            className="text-muted-foreground hover:text-accent transition-colors"
-            data-testid="link-footer-email"
-          >
-            <Mail className="w-4 h-4" />
-          </a>
+          <Magnetic>
+            <a
+              href={portfolioData.contact.github}
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground hover:text-accent transition-colors p-2 -m-2 inline-block"
+              data-testid="link-footer-github"
+            >
+              <Github className="w-4 h-4" />
+            </a>
+          </Magnetic>
+          <Magnetic>
+            <a
+              href={portfolioData.contact.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground hover:text-accent transition-colors p-2 -m-2 inline-block"
+              data-testid="link-footer-linkedin"
+            >
+              <Linkedin className="w-4 h-4" />
+            </a>
+          </Magnetic>
+          <Magnetic>
+            <a
+              href={`mailto:${portfolioData.contact.email}`}
+              className="text-muted-foreground hover:text-accent transition-colors p-2 -m-2 inline-block"
+              data-testid="link-footer-email"
+            >
+              <Mail className="w-4 h-4" />
+            </a>
+          </Magnetic>
         </div>
       </div>
     </footer>
