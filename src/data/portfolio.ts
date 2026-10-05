@@ -150,7 +150,6 @@ export const portfolioData = {
         items: [
           "AWS",
           "Oracle Cloud",
-          "GCP",
           "Docker",
           "GitHub Actions",
           "CI/CD",
